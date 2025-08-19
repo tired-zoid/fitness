@@ -1,0 +1,20 @@
+{
+    "name": "rahim/fitness_scheduler",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "tired-zoid",
+            "email": "rahimzoid@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6",
+        "telegram-bot/api": "^2.5",
+      "ext-pdo": "*",
+      "ext-curl": "*"
+    }
+}
