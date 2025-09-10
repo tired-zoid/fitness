@@ -116,12 +116,12 @@ class TelegramLogicManager
             $buttons[] = [
                 [
                     'text' => "$dayOfWeek ($date)",
-                    'callback_data' => "day_selection:$date" // TODO вынести куда-то?
+                    'callback_data' => "day_selection:$date"
                 ]
             ];
         }
 
-        // Добавляем кнопки для перехода на следующую или предыдущую неделю
+
         $buttons[] = [
             [
                 'text' => "← Предыдущая неделя",

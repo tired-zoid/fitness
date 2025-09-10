@@ -20,7 +20,6 @@ class ScheduleService
             return $decoded['schedule'] ?? [];
         }
 
-        // todo header сохранять при первой авторизации / генерировать??
         $header = [
             'Accept: application/json, text/javascript, */*; q=0.01',
             'Authorization: Bearer 91ef42dab154cc0f4567092f3205fb9bb5b1df7c',

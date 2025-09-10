@@ -14,12 +14,8 @@ class Bot
         $this->client = new Client($token);
     }
 
-    /**
-     * Запускает обработку входящих сообщений
-     */
     public function run(callable $messageHandler)
     {
-        // Перед этим добавь проверку, чтобы убедиться, что $messageHandler верно инициализирован
         if ($messageHandler) {
             $this->client->on($messageHandler);
             $this->client->run();

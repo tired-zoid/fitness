@@ -22,27 +22,5 @@ class TaskScheduler
             $taskAdded = true;
         }
         return $taskAdded;
-
-//        $taskName = "PlanetaFitness" . time();
-//        $phpPath = "C:\\xampp\\php\\php.exe";
-//        $scriptPath = "C:\\Users\\rahim\\PhpstormProjects\\fitness_scheduler\\cron\\make_reserve.php";
-//        $arguments = $id;
-//
-//        $command = "schtasks /create /tn \"$taskName\" /tr \"$phpPath $scriptPath $arguments\" /sc once /st $time /sd $date";
-//
-//        exec($command, $output, $returnVar);
-//        if ($returnVar === 0) {
-//            $checkCommand = "schtasks /query /tn \"$taskName\"";
-//            exec($checkCommand, $checkOutput, $checkReturnVar);
-//
-//            if ($checkReturnVar === 0) {
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        } else {
-//            return false;
-//        }
     }
-    // Можно добавить методы для удаления, изменения задач и т.п.
 }

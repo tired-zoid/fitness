@@ -8,8 +8,6 @@ use Dotenv\Dotenv;
  use PDO;
  use PDOException;
 
-
-
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
  class DbConnector {
@@ -20,7 +18,6 @@ $dotenv->load();
      public PDO $pdo;
      public function __construct ()
      {
-         // TODO env прошлый век?
          $this->host = $_ENV["DB_HOST"];
          $this->dbname = $_ENV["DB_NAME"];
          $this->user = $_ENV["DB_LOGIN"];
@@ -33,8 +30,8 @@ $dotenv->load();
      {
          try {
              $this->pdo = new PDO("mysql:host=$this->host;dbname=$this->dbname;charset=utf8", $this->user, $this->pass, [
-                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Включаем обработку ошибок
-                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Устанавливаем режим выборки
+                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
              ]);
              file_put_contents( __DIR__ . '/../../logs/logfile.log', "Успешно подключились", FILE_APPEND);
              echo "Подключение успешно!";

@@ -1,7 +1,6 @@
 <?php
 
 use App\Connectors\DbConnector;
-use App\Database\Database;
 use App\LogicManagers\TelegramLogicManager;
 use Dotenv\Dotenv;
 use TelegramBot\Api\BotApi;
@@ -13,7 +12,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
-//echo "test"; die;
+
 $bot = new BotApi($_ENV["BOT_TOKEN"]);
 $dbConnector = new DbConnector();
 $TgLM = new TelegramLogicManager($bot, $dbConnector);
@@ -30,7 +29,6 @@ if ($data) {
             $TgLM->handleMessage($message);
         }
 
-        // Обработка нажатия на callback-кнопки
         if (isset($update['callback_query'])) {
             $callbackQuery = $update['callback_query'];
 
