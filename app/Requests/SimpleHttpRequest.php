@@ -32,6 +32,11 @@ class SimpleHttpRequest extends HttpRequestBase
     {
         $this->clearOptions();
 
+        // Если data - массив, преобразуем в строку
+        if (is_array($data)) {
+            $data = http_build_query($data);
+        }
+
         $options = [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -41,6 +46,7 @@ class SimpleHttpRequest extends HttpRequestBase
             CURLOPT_ENCODING => 'gzip,deflate,br',
             CURLOPT_TIMEOUT => 15,
         ];
+
 
         if (parse_url($url, PHP_URL_SCHEME) === 'https') {
             $options[CURLOPT_SSL_VERIFYPEER] = 0;

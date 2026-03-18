@@ -17,7 +17,7 @@ class ScheduleService
         if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $this->cacheTTL)) {
             $json = file_get_contents($cacheFile);
             $decoded = json_decode($json, true);
-            return $decoded['schedule'] ?? [];
+            return $decoded['schedule']?? [];
         }
 
         $header = [

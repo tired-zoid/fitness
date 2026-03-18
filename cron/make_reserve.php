@@ -6,6 +6,7 @@ use App\Requests\SimpleHttpRequest;
 use TelegramBot\Api\BotApi;
 use Dotenv\Dotenv;
 
+
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 $args = $_SERVER['argv'];

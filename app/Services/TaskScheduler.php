@@ -12,7 +12,7 @@ class TaskScheduler
         $hour = $dateTime->format('H');
         $minute = $dateTime->format('i');
 
-        $command = "/opt/php/8.3/bin/php /var/www/u3042487/data/fitness_scheduler/cron/make_reserve.php $id";
+        $command = "/opt/php/8.3/bin/php /var/www/u3453443/data/www/plntftns.ru/cron/make_reserve.php $id"; // todo адекватно путь прописть
         $cronJob = "$minute $hour $day $month * $command";
 
         $taskAdded = false;

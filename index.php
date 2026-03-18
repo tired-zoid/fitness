@@ -8,9 +8,10 @@ use TelegramBot\Api\BotApi;
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
+//require_once __DIR__ . '/app/Core/Logger.php';
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 
 $bot = new BotApi($_ENV["BOT_TOKEN"]);
@@ -35,7 +36,7 @@ if ($data) {
             $TgLM->handleCallback($callbackQuery);
         }
     } catch (Exception $e) {
-        file_put_contents( __DIR__ . '/../logs/logfile.log', 'Ошибка: ' . $e->getMessage() . "\n", FILE_APPEND);
+        file_put_contents( __DIR__ . '/logs/logfile.log', 'Ошибка: ' . $e->getMessage() . "\n", FILE_APPEND);
     }
 }
 
