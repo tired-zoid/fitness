@@ -58,7 +58,10 @@ $dotenv->load();
      public function select($params)
      {
          try {
-             $sql = "SELECT * FROM `reserves` WHERE `activity_id` = :activity_id AND `user` = :user";
+             $sql = "SELECT * FROM `reserves` 
+                WHERE `activity_id` = :activity_id AND `user` = :user 
+                ORDER BY `id` DESC 
+                LIMIT 1";
              $stmt = $this->pdo->prepare($sql);
              $stmt->execute($params);
              return $stmt->fetch();
