@@ -88,7 +88,7 @@ class DbConnector
 
     public function getUserReservations(string $user): array
     {
-        $sql = "SELECT * FROM `reserves` WHERE `user` = :user ORDER BY `date_info` DESC";
+        $sql = "SELECT * FROM `reserves` WHERE `user` = :user ORDER BY `date_info` ASC";
         $result = $this->executeStatement($sql, [':user' => $user]);
 
         return $result ?: [];

@@ -45,7 +45,7 @@ class TelegramLogicManager
     /**
      * Отправка ответа в бот
      */
-    private function sendResponse(string $message, $keyboard = null, $deletePrev = false): void
+    private function sendResponse(string $message, $keyboard = null, $deletePrev = false, $parseMode = null): void
     {
        if ($this->lastMessageId && $deletePrev) {
            $this->bot->deleteMessage($this->chatId, $this->lastMessageId);
@@ -54,7 +54,7 @@ class TelegramLogicManager
         $msg = $this->bot->sendMessage(
             $this->chatId,
             $message,
-            null,
+            $parseMode,
             false,
             null,
             $keyboard
@@ -158,13 +158,13 @@ class TelegramLogicManager
         $reserves = $this->dbConnector->getUserReservations($this->chatId);
         $message = "";
         foreach ($reserves as $index => $reserve) {
-            $message .= "\nЗапись " . ($index + 1) . ":\n";
-            $message .= "Дата: " . $reserve['date_info'] . "\n";
-            $message .= "Тренировка: " . $reserve['name'] . "\n";
-            $message .= "Пользователь: " . $reserve['user'] . "\n";
-            $message .= "Статус: " . $reserve['status'] . "\n\n";
+            $status = $reserve['status'] === 'confirmed' ? '🟢 confirmed' : '🔴 waiting';
+
+            $message .= "<b>" . ($index + 1) . ".</b> 🔹" . $reserve['date_info'] . "\n";
+            $message .= $reserve['name'] . "\n";
+            $message .= "👤 " . $reserve['user'] . " | " . $status . "\n\n";
         }
-        $this->sendResponse("Ваши записи:" . $message);
+        $this->sendResponse("Ваши записи: \n" . $message, null, false, 'HTML');
 
 
     }
@@ -239,12 +239,12 @@ class TelegramLogicManager
 
                     // Переносим время на новую строку
                     $title = $item['activity']['title'];
-                    if (mb_strlen($title) > 20) {
-                        $title = mb_substr($title, 0, 20) . '...';
+                    if (mb_strlen($title) > 16) {
+                        $title = mb_substr($title, 0, 16) . '...';
                     }
 
                     $buttons[] = [[
-                        'text' => "$title\n🕐 $dateTime",
+                        'text' => "$title | 🕐$dateTime",
                         'callback_data' => "reserve:" . $item['id'] . ":" . $date
                     ]];
                 }
