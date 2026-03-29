@@ -155,7 +155,7 @@ class TelegramLogicManager
 
     public function myReserves()
     {
-        $reserves = $this->dbConnector->selectAll($this->chatId);
+        $reserves = $this->dbConnector->getUserReservations($this->chatId);
         $message = "";
         foreach ($reserves as $index => $reserve) {
             $message .= "\nЗапись " . ($index + 1) . ":\n";
@@ -200,7 +200,7 @@ class TelegramLogicManager
             'name' => $training['activity']['title'],
             'status' => 'waiting',
         ];
-        $this->dbConnector->insert($data);
+        $this->dbConnector->insertReservation($data);
     }
 
 

@@ -41,11 +41,11 @@ while (!$success) {
     $client->setHeader($header);
     $response = $client->post("https://mobifitness.ru/api/v8/account/reserve.json", $data);
 
+
     if (str_contains($response,"success")) {
         $db = new DbConnector();
-        $db->connect();
-        $db->update($arg1);
-        $training = $db->select($params);
+        $db->confirmReservation($arg1);
+        $training = $db->getLastUserReservation($arg1, $mChatId);
 
         $success = true;
         $bot = new BotApi($botToken);
