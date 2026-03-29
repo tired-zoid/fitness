@@ -234,10 +234,17 @@ class TelegramLogicManager
                     $this->selectedDayTrainings[] = $item;
 
                     $timestamp = strtotime($item['datetime']);
-                    $dateTime = date('j/m - H:i', $timestamp);
+                    $dateTime = date('H:i', $timestamp);
                     $date = date('j/m', $timestamp);
+
+                    // Переносим время на новую строку
+                    $title = $item['activity']['title'];
+                    if (mb_strlen($title) > 20) {
+                        $title = mb_substr($title, 0, 20) . '...';
+                    }
+
                     $buttons[] = [[
-                        'text' => $item['activity']['title'] . " - $dateTime",
+                        'text' => "$title\n🕐 $dateTime",
                         'callback_data' => "reserve:" . $item['id'] . ":" . $date
                     ]];
                 }
@@ -249,6 +256,5 @@ class TelegramLogicManager
             $this->sendResponse("Проблемы с получением расписания на выбранную дату. Попробуйте еще раз.");
         }
     }
-
 
 }

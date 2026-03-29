@@ -2,17 +2,22 @@
 
 namespace App\Services;
 
+use Dotenv\Dotenv;
+
 class TaskScheduler
 {
     public function setTask($dateTime, $id): bool
     {
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+        $dotenv->load();
+
         $month = $dateTime->format('m');
         $month = str_replace("0", "", $month);
         $day = $dateTime->format('d');
         $hour = $dateTime->format('H');
         $minute = $dateTime->format('i');
 
-        $command = "/opt/php/8.3/bin/php /var/www/u3453443/data/www/plntftns.ru/cron/make_reserve.php $id"; // todo адекватно путь прописть
+        $command = $_ENV["PHP_PATH"] . ' ' . $_ENV['MAKE_RESERVE_PATH'] . ' ' . $id;
         $cronJob = "$minute $hour $day $month * $command";
 
         $taskAdded = false;
@@ -23,4 +28,5 @@ class TaskScheduler
         }
         return $taskAdded;
     }
+    // todo добавить функционал удаления крон задач после выполнения
 }

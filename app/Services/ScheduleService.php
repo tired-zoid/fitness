@@ -30,7 +30,8 @@ class ScheduleService
         $client = new SimpleHttpRequest();
         $client->setHeader($header);
 
-        $response = $client->get("https://mobifitness.ru/api/v8/club/407/schedule.json?year=$year&week=$week");
+        $url = str_replace(['{year}', '{week}'], [$year, $week], $_ENV['SCHEDULE_URL']);
+        $response = $client->get($url);
         $result = trim($response);
         $json = str_replace(["\r", "\n"], '', $result);
         $json = mb_convert_encoding($json, 'UTF-8', 'auto');
