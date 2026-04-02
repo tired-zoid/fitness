@@ -140,12 +140,38 @@ class TelegramLogicManager
 
     private function start(): void
     {
+        // Регистрируем пользователя
+        $username = $this->message['from']['username'] ?? null;
+        $firstName = $this->message['from']['first_name'] ?? null;
+        $lastName = $this->message['from']['last_name'] ?? null;
+        $fullName = trim($firstName . ' ' . $lastName);
+
+        $this->dbConnector->createUserIfNotExists($this->chatId, $username, $fullName);
+
+        // Проверяем, есть ли уже токен у пользователя
+        $hasToken = $this->dbConnector->getUserAuthToken($this->chatId);
+
         $buttons = [
-            ["get_week"], ["my_reserves"],
+            ["/get_week", "/my_reserves"],
+            ["/set_auth_token"]
         ];
 
         $keyboard = new ReplyKeyboardMarkup($buttons, false, true);
-        $this->sendResponse("Привет! Я помогу тебе записаться на занятие.", $keyboard);
+
+        $message = "Привет, $firstName! 👋\n\nЯ помогу тебе записаться на занятие.\n\n";
+
+        if ($hasToken) {
+            $message .= "✅ У вас уже установлен auth токен.\n";
+        } else {
+            $message .= "⚠️ *ВАЖНО:* Сначала установите auth токен командой /set_auth_token\n\n";
+        }
+
+        $message .= "\n📋 Доступные команды:\n";
+        $message .= "🔹 /get_week - выбрать занятие\n";
+        $message .= "🔹 /my_reserves - мои записи\n";
+        $message .= "🔹 /set_auth_token - установить токен авторизации";
+
+        $this->sendResponse($message, $keyboard, false, 'Markdown');
     }
 
     private function getWeek(): void
@@ -181,7 +207,7 @@ class TelegramLogicManager
             $this->sendResponse("Ошибка записи" );
         }
         $datetime = new DateTime($training['beginDate']);
-        $result = $this->taskScheduler->setTask($datetime, $id);
+        $result = $this->taskScheduler->setTask($datetime, $id, $this->chatId);
 
         if ($result) {
             $this->insertReservationToDb($training);
@@ -254,6 +280,46 @@ class TelegramLogicManager
             $this->sendResponse("Расписание на $selectedDate:", $keyboard);
         } else {
             $this->sendResponse("Проблемы с получением расписания на выбранную дату. Попробуйте еще раз.");
+        }
+    }
+
+    /**
+     * Установка auth_token пользователя
+     * Команда: /set_auth_token
+     */
+    private function setAuthToken(): void
+    {
+        // Проверяем, есть ли параметр
+        if (empty($this->params)) {
+            $message = "🔐 *Как получить auth_token:*\n\n";
+            $message .= "1. Зайдите в приложение или на сайт фитнес-клуба\n";
+            $message .= "2. Откройте инструменты разработчика (F12)\n";
+            $message .= "3. Перейдите во вкладку Network (Сеть)\n";
+            $message .= "4. Найдите любой запрос к API\n";
+            $message .= "5. В заголовках найдите `Authorization: Bearer`\n";
+            $message .= "6. Скопируйте токен после `Bearer `\n\n";
+            $message .= "📝 *Отправьте токен командой:*\n";
+            $message .= "`/set_auth_token ВАШ_ТОКЕН`";
+
+            $this->sendResponse($message, null, false, 'Markdown');
+            return;
+        }
+
+        $authToken = $this->params[0];
+
+        // Простая валидация токена (проверяем, что он не пустой и похож на токен)
+        if (strlen($authToken) < 10) {
+            $this->sendResponse("❌ Токен слишком короткий. Убедитесь, что вы скопировали полный токен.");
+            return;
+        }
+
+        // Сохраняем токен в БД
+        $result = $this->dbConnector->updateUserAuthToken($this->chatId, $authToken);
+
+        if ($result) {
+            $this->sendResponse("✅ Auth токен успешно сохранен! Теперь вы можете записываться на занятия.");
+        } else {
+            $this->sendResponse("❌ Ошибка при сохранении токена. Попробуйте еще раз.");
         }
     }
 

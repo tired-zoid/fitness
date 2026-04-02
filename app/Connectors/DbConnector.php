@@ -71,7 +71,7 @@ class DbConnector
         return $this->executeStatement($sql, $data);
     }
 
-    public function getLastUserReservation(string $activityId, string $user): ?array
+    public function getLastUserReservation($activityId, $user): ?array
     {
         $sql = "SELECT * FROM `reserves` 
                 WHERE `activity_id` = :activity_id AND `user` = :user 
@@ -83,7 +83,7 @@ class DbConnector
             ':user' => $user
         ]);
 
-        return $result ?: null;
+        return $result[0] ?: null;
     }
 
     public function getUserReservations(string $user): array
@@ -171,5 +171,75 @@ class DbConnector
     public function getConnection(): PDO
     {
         return $this->pdo;
+    }
+
+    /**
+     * Получить пользователя по chat_id
+     */
+    public function getUserByChatId(string $chatId): ?array
+    {
+        $sql = "SELECT * FROM `users` WHERE `chat_id` = :chat_id LIMIT 1";
+        $result = $this->executeStatement($sql, [':chat_id' => $chatId]);
+
+        return !empty($result) ? $result[0] : null;
+    }
+
+    /**
+     * Создать пользователя если не существует
+     */
+    public function createUserIfNotExists(string $chatId, ?string $username = null, ?string $name = null): bool
+    {
+        // Проверяем, существует ли уже
+        $existing = $this->getUserByChatId($chatId);
+        if ($existing) {
+            return true;
+        }
+
+        // Создаем нового
+        $sql = "INSERT INTO `users` (`chat_id`, `username`, `name`) VALUES (:chat_id, :username, :name)";
+        return $this->executeStatement($sql, [
+            ':chat_id' => $chatId,
+            ':username' => $username,
+            ':name' => $name
+        ]);
+    }
+
+    /**
+     * Обновить auth_token пользователя (создает пользователя если не существует)
+     */
+    public function updateUserAuthToken(string $chatId, string $authToken): bool
+    {
+        // REPLACE работает как INSERT, но если запись с таким chat_id существует - обновляет
+        $sql = "REPLACE INTO `users` (`chat_id`, `auth_token`) VALUES (:chat_id, :auth_token)";
+        return $this->executeStatement($sql, [
+            ':chat_id' => $chatId,
+            ':auth_token' => $authToken
+        ]);
+    }
+
+    /**
+     * Получить auth_token пользователя
+     */
+    public function getUserAuthToken(string $chatId): ?string
+    {
+        $sql = "SELECT `auth_token` FROM `users` WHERE `chat_id` = :chat_id LIMIT 1";
+        $result = $this->executeStatement($sql, [':chat_id' => $chatId]);
+
+        if (!empty($result) && isset($result[0]['auth_token'])) {
+            return $result[0]['auth_token'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Получить всех пользователей
+     */
+    public function getAllUsers(): array
+    {
+        $sql = "SELECT * FROM `users` ORDER BY `id` DESC";
+        $result = $this->executeStatement($sql);
+
+        return $result ?: [];
     }
 }
