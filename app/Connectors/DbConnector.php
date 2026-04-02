@@ -71,7 +71,7 @@ class DbConnector
         return $this->executeStatement($sql, $data);
     }
 
-    public function getLastUserReservation(int $activityId, string $user): ?array
+    public function getLastUserReservation(string $activityId, string $user): ?array
     {
         $sql = "SELECT * FROM `reserves` 
                 WHERE `activity_id` = :activity_id AND `user` = :user 
@@ -94,7 +94,7 @@ class DbConnector
         return $result ?: [];
     }
 
-    public function confirmReservation(int $activityId): bool
+    public function confirmReservation(string $activityId): bool
     {
         $sql = "UPDATE `reserves` SET `status` = :status WHERE `activity_id` = :id";
 
